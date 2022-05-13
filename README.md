@@ -31,3 +31,7 @@ I'm currently learning from a bunch of free YouTube tutorials and the Web Develo
 | Update  | /campgrounds/:id      | PUT    | Updates specific campground on server |
 | Destroy | /campgrounds/:id      | DELETE | Deletes specific item on server       |
 
+## Can't get this to work
+- Client side form validation with Bootstrap. Form gets submitted, even if it´s empty. Tooltip won´t show when the form's input is good.
+    - *I don´t know how to debug bootstrap.*
+
