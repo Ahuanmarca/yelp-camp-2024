@@ -65,15 +65,15 @@ const validateReview = (req, res, next) => {
 
 
 // app.use(morgan('tiny'))
-app.use((req, res, next) => {
-    console.log(req.method.toUpperCase(), req.path);
-    next();
-})
+// app.use((req, res, next) => {
+//     console.log(req.method.toUpperCase(), req.path);
+//     next();
+// })
 
-app.use('/dogs', (req, res, next) => {
-    console.log('I love dogs');
-    next();
-})
+// app.use('/dogs', (req, res, next) => {
+//     console.log('I love dogs');
+//     next();
+// })
 
 // ROUTES !!!
 
@@ -87,7 +87,7 @@ app.get('/', (req, res) => {
 // Campgrounds INDEX
 app.get('/campgrounds', async (req, res) => {
     const campgrounds = await Campground.find({});
-    console.log("Opening index page");
+    // console.log("Opening index page");
     res.render('campgrounds/index', { campgrounds });
 });
 
@@ -115,7 +115,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res, /*next*
 // Campgrounds SHOW DETAILS
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id).populate('reviews');
-    console.log(campground);
+    // console.log(campground);
     res.render('campgrounds/show', { campground });
 }));
 
@@ -135,14 +135,14 @@ app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
     // Colt desestructura e inmediatamente reestructura req.body.campground en un objeto, no entiendo por qué...
     // const updated = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, {new:true})
     const updated = await Campground.findByIdAndUpdate(id, req.body.campground, {new:true})
-    console.log(`Updated campground: ${ updated.title }`)
+    // console.log(`Updated campground: ${ updated.title }`)
     res.redirect(`/campgrounds/${updated._id}`)
 }));
 
 app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;  
     const deleted = await Campground.findByIdAndDelete(id);
-    console.log(`Deleted campground: ${ deleted.title }`)
+    // console.log(`Deleted campground: ${ deleted.title }`)
     res.redirect('/campgrounds');
 }));
 
@@ -156,8 +156,17 @@ app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async(req, res) 
 }));
 
 app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async(req, res) => {
-    // res.send("DELETED REVIEW!");
-    await Review.findByIdAndDelete(req.params.reviewId);
+    // We still have a reference to this campground, in the array of object IDs, so we have to find that reference and delete it
+    // We are going to use an operator in Mongo called pull
+    
+    const { id, reviewId } = req.params;
+    const deletedCampground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId }});
+    
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
+
+    // console.log({deletedCampground, deletedReview});
+
+    res.redirect(`/campgrounds/${id}`);
 
 }));
 
