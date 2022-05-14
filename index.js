@@ -64,23 +64,13 @@ const validateReview = (req, res, next) => {
 }
 
 
-// app.use(morgan('tiny'))
-// app.use((req, res, next) => {
-//     console.log(req.method.toUpperCase(), req.path);
-//     next();
-// })
-
-// app.use('/dogs', (req, res, next) => {
-//     console.log('I love dogs');
-//     next();
-// })
 
 // ROUTES !!!
 
 // hello, world
 app.get('/', (req, res) => {
-    // res.redirect('/campgrounds')
-    res.render('home')
+    res.redirect('/campgrounds')
+    // res.render('home')
 });
 
 
