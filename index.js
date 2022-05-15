@@ -1,20 +1,18 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const Campground = require('./models/campground');
 const methodOverride = require('method-override');  
 const ejsMate = require('ejs-mate')
-const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
-const Joi = require('joi');
-const { join } = require('path');
-const { campgroundSchema, reviewSchema } = require('./schemas.js');
-const Review = require('./models/review');
+const session = require('express-session');
+const flash = require('connect-flash');
 
+// DATABASE CONNECTION
 mongoose.connect('mongodb://localhost:27017/yelp-camp', { 
     useNewUrlParser: true, 
     // useCreateIndex: true, 
-    useUnifiedTopology: true 
+    useUnifiedTopology: true,
+    // useFindAndModify: false
 })
 
 // ALTERNATIVA A .THEN() Y .CATCH()
@@ -26,150 +24,58 @@ db.once("open", () => {
 
 const app = express();
 
-// TEMPLATE ENGINE
+// SETTINGS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('ejs', ejsMate);
 
 // MIDDLEWARE
-//      Son funciones que se corren cada vez que ocurre un request, siempre !!
-//      ...y luego se continúa corriendo el resto del códico que corresponda
-app.use(express.urlencoded({ extended: true }))
-app.use(methodOverride('_method'))
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-
-const validateCampground = (req, res, next) => {
-
-    const { error } = campgroundSchema.validate(req.body);
-    
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
+const sessionConfig = {
+    secret: 'youWillNeverGuess',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true, 
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
 
-const validateReview = (req, res, next) => {
+app.use(session(sessionConfig));
+app.use(flash());
 
-    const { error } = reviewSchema.validate(req.body);
-
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-
-}
+// Middleware para flash messages
+// We will have access to 'success' as a variable in every single template, we don't have to pass it through!!! 😀 I was looking for this!!
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
 
 
-
-// ROUTES !!!
-
-// hello, world
+// ROUTES
 app.get('/', (req, res) => {
     res.redirect('/campgrounds')
-    // res.render('home')
-});
+})
+app.use('/campgrounds', require('./routes/campgrounds'));
+app.use('/campgrounds/:id/reviews', require('./routes/reviews'));
 
-
-// Campgrounds INDEX
-app.get('/campgrounds', async (req, res) => {
-    const campgrounds = await Campground.find({});
-    // console.log("Opening index page");
-    res.render('campgrounds/index', { campgrounds });
-});
-
-
-// Campgrounds CREATE NEW - FORM
-app.get('/campgrounds/new', (req, res) => {
-    res.render('campgrounds/new');
-});
-
-// Campgrounds CREATE NEW - POST ROUTE
-app.post('/campgrounds', validateCampground, catchAsync(async (req, res, /*next*/) => {
-    // 👀 ¡Esto funciona gracias a catchAsync! 👀
-    // if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400)
-
-
-
-    const newCamp = new Campground(req.body.campground); 
-    await newCamp.save();
-    // console.log(`Saved new campground: ${ newCamp.title }`);
-    res.redirect(`/campgrounds/${newCamp._id}`)
-}));
-
-
-
-// Campgrounds SHOW DETAILS
-app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews');
-    // console.log(campground);
-    res.render('campgrounds/show', { campground });
-}));
-
-
-
-// Campgrounds EDIT DETAILS
-//      EDITING FORM
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findById(id)
-    res.render('campgrounds/edit', { campground })
-}));
-
-//      Route to update DB via PUT...
-app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
-    const { id } = req.params;
-    // Colt desestructura e inmediatamente reestructura req.body.campground en un objeto, no entiendo por qué...
-    // const updated = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, {new:true})
-    const updated = await Campground.findByIdAndUpdate(id, req.body.campground, {new:true})
-    // console.log(`Updated campground: ${ updated.title }`)
-    res.redirect(`/campgrounds/${updated._id}`)
-}));
-
-app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
-    const { id } = req.params;  
-    const deleted = await Campground.findByIdAndDelete(id);
-    // console.log(`Deleted campground: ${ deleted.title }`)
-    res.redirect('/campgrounds');
-}));
-
-app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async(req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    const review = new Review(req.body.review);
-    campground.reviews.push(review);
-    await review.save();
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-}));
-
-app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async(req, res) => {
-    // We still have a reference to this campground, in the array of object IDs, so we have to find that reference and delete it
-    // We are going to use an operator in Mongo called pull
-    
-    const { id, reviewId } = req.params;
-    const deletedCampground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId }});
-    
-    const deletedReview = await Review.findByIdAndDelete(reviewId);
-
-    // console.log({deletedCampground, deletedReview});
-
-    res.redirect(`/campgrounds/${id}`);
-
-}));
-
-
+// Deprecated error handling
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404))
 });
 
 app.use((err, req, res, next) => {
+    console.error("what am i doing here?");
     const { statusCode = 500, message = 'Something went wrong' } = err;
     if (!err.message) err.message = 'Oh No! Something Went Wrong!'
     res.status(statusCode).render('error', { err });
 });
+
 
 app.listen(3000, () => {
     console.log('hello, world - Serving on port 3000');
