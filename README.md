@@ -4,12 +4,13 @@ Web app created with **Node**, **Express**, **MongoDB** and **mongoose**.
 
 ## RESTful routes
 
-| NAME    | PATH                  | VERB   | PURPOSE                               |
-|---------|-----------------------|--------|---------------------------------------|
-| Index   | /campgrounds          | GET    | Display all campgrounds               |
-| New     | /campgrounds/new      | GET    | Form to create new campground         |
-| Create  | /campgrounds          | POST   | Creates a new campground on server    |
-| Show    | /campgrounds/:id      | GET    | Details for one specific campground   |
-| Edit    | /campgrounds/:id/edit | GET    | Form to edit specific campground      |
-| Update  | /campgrounds/:id      | PUT    | Updates specific campground on server |
-| Destroy | /campgrounds/:id      | DELETE | Deletes specific item on server       |
+| PATH                    | VERB   | PURPOSE                            |
+|-------------------------|--------|------------------------------------|
+| /                       | GET    | Homepage                           |
+| /campgrounds            | GET    | Display all campgrounds            |
+| /campgrounds/:id/show   | GET    | Show details for one campground    |
+| /campgrounds/:id/edit   | GET    | Form to edit one campground        |
+| /campgrounds/:id/edit   | PUT    | (Endpoint) to edit one campground  |
+| /campgrounds/:id/delete | DELETE | Deletes one campground             |
+| /campgrounds/new        | GET    | Form to create new campground      |
+| /campgrounds/new        | POST   | (Endpoint) Creates new campground  |

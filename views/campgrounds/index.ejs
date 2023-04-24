@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yelp Camp: All Campgrounds</title>
+</head>
+<body>
+    <a href="/"><h1>Yelp Camp!</h1><hr></a>
+
+    <h2>All Campgrounds</h2>
+    <ul>
+        <% for (campground of campgrounds) {%>
+            <li><a href="/campgrounds/<%=campground._id%>/show"><%= campground.title %></a> - <%= campground.location %></li>
+        <%} %>
+    </ul>
+</body>
+</html>
