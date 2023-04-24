@@ -1,9 +1,7 @@
 # YelpCamp
+Web App created with **Node.js** and **MongoDB**.
 
-Web app created with **Node**, **Express**, **MongoDB** and **mongoose**.
-
-## RESTful routes
-
+## Routes
 | PATH                    | VERB   | PURPOSE                            |
 |-------------------------|--------|------------------------------------|
 | /                       | GET    | Homepage                           |
