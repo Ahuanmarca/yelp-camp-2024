@@ -1,0 +1,9 @@
+<%- include('../partials/head') %> <%- include('../partials/navbar') %>
+<h2><%= campground.title %></h2>
+<p><%= campground.location %></p>
+<p>id <%= campground._id %></p>
+<a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+<form action="/campgrounds/<%= campground._id %>/delete?_method=DELETE" method="POST">
+  <input type="submit" value="Delete">
+</form>
+<%- include('../partials/footer') %>

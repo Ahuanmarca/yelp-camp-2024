@@ -1,0 +1,10 @@
+<%- include('../partials/head') %> <%- include('../partials/navbar') %>
+<h1>All Campgrounds</h1>
+<ul>
+  <% campgrounds.forEach(campground => { %>
+  <li>
+    <a href="/campgrounds/<%= campground._id %>/show"><%= campground.title %></a>
+  </li>
+  <% }) %>
+</ul>
+<%- include('../partials/footer') %>

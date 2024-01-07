@@ -9,7 +9,6 @@ main().catch((err) => console.log(err));
 
 async function main() {
   setEnvironmentVariables();
-  console.log(process.env);
   const { MONGO_URL, MONGO_DB_NAME } = process.env;
   await connectToDatabase(MONGO_URL, MONGO_DB_NAME);
   await seedDB();

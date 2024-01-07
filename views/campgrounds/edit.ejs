@@ -1,0 +1,44 @@
+<%- include('../partials/head') %> <%- include('../partials/navbar') %>
+<h1>Edit Campground</h1>
+
+<% if (campground) { %>
+<pre>
+  Campground received!
+  Campground: <%= campground.title %>
+  Location: <%= campground.location %>
+  id: <%= campground._id %>
+ </pre
+>
+<% } %>
+
+<%# TIP:
+campground[title] and campground[location] CREATES OBJECT
+{ campground: { title: 'Tumbling Creek', location: 'Jupiter, Florida' }}
+ON req.body %>
+
+<form action="/campgrounds/<%= campground._id %>/edit?_method=PUT" method="POST">
+  <div>
+    <label for="title">Title</label>
+    <input
+      id="title"
+
+      name="campground[title]"
+      type="text"
+      value="<%= campground.title %>"
+    />
+  </div>
+  <div>
+    <label for="location">Location</label>
+    <input
+      id="location"
+      name="campground[location]"
+      type="text"
+      value="<%= campground.location %>"
+    />
+  </div>
+  <div>
+    <input type="submit" value="Save" />
+  </div>
+  <a href="/campgrounds/<%= campground._id %>/show">Back to campground</a>
+</form>
+<%- include('../partials/footer') %>

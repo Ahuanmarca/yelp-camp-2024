@@ -1,0 +1,11 @@
+<%- include('../partials/head') %> <%- include('../partials/navbar') %>
+<h1>Seed Campgrounds</h1>
+<p>Empty the database and refill it with random campgrounds.</p>
+<form action="/campgrounds/seed" method="POST">
+  <div>
+    <label for="quantity">How many?</label>
+    <input id="quantity" name="quantity" type="number" min="1" value="10">
+    <input type="submit" value="SEED!">
+  </div>
+</form>
+<%- include('../partials/footer') %>
