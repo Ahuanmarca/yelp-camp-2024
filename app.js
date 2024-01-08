@@ -83,16 +83,6 @@ async function main() {
     res.redirect("/campgrounds");
   });
 
-  // * SEED CAMPGROUNDS
-  app.get("/campgrounds/seed", (req, res) => {
-    res.render("campgrounds/seed");
-  });
-
-  app.post("/campgrounds/seed", async (req, res) => {
-    console.log("NOT SEEDING!");
-    res.redirect("/campgrounds");
-  })
-
   app.listen(3000, () => {
     console.log("YelpCamp 2024 serving on port 3000");
   });
