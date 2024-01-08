@@ -6,6 +6,7 @@ const CampgroundSchema = new Schema({
   price: String,
   description: String,
   location: String,
+  image: String,
 });
 
 export default mongoose.model("Campground", CampgroundSchema);
