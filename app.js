@@ -4,6 +4,7 @@ import express from "express";
 import Campground from "./models/campgrounds.js";
 import methodOverride from "method-override";
 import ExpressError from "./src/utils/ExpressError.js";
+import catchAsync from "./src/utils/catchAsync.js";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -13,8 +14,8 @@ main().catch((err) => console.log(err));
 
 /**
  * ExpressError
- * I can throw ExpressError inside try/catch blocks (on the try 
- * section) to catch errors that won't be automatically detected 
+ * I can throw ExpressError inside try/catch blocks (on the try
+ * section) to catch errors that won't be automatically detected
  * by node, like creating an empty campground. It will pass to
  * next() on the catch block, then to app.use at the bottom.
  */
@@ -38,51 +39,60 @@ async function main() {
   });
 
   // * ALL CAMPGROUNDS
-  app.get("/campgrounds", async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render("campgrounds/index", { campgrounds });
-  });
+  app.get(
+    "/campgrounds",
+    catchAsync(async (req, res) => {
+      const campgrounds = await Campground.find({});
+      res.render("campgrounds/index", { campgrounds });
+    })
+  );
+
+  // app.get(
+    // "/campgrounds",
+    // catchAsync(async (req, res) => {
+      // const campgrounds = await Campground.find({});
+      // res.render("campgrounds/index", { campgrounds });
+    // })
+  // );
 
   // * CAMPGROUND DETAILS
-  app.get("/campgrounds/:id/show", async (req, res, next) => {
-    try {
+  app.get(
+    "/campgrounds/:id/show",
+    catchAsync(async (req, res, next) => {
       // throw new ExpressError("OOPS, ERROR MANUALLY THRONW", 404);
       const { id } = req.params;
       const campground = await Campground.findById(id);
       res.render("campgrounds/show", { campground });
-    } catch (e) {
-      next(e);
-    }
-  });
+    })
+  );
 
   // * CREATE NEW CAMPGROUND
   app.get("/campgrounds/new", (req, res) => {
     res.render("campgrounds/new");
   });
 
-  app.post("/campgrounds/new", async (req, res, next) => {
-    try {
+  app.post(
+    "/campgrounds/new",
+    catchAsync(async (req, res, next) => {
       const campground = new Campground(req.body.campground);
       await campground.save();
       res.redirect(`/campgrounds/${campground._id}/show`);
-    } catch (e) {
-      next(e);
-    }
-  });
+    })
+  );
 
   // * EDIT CAMPGROUND
-  app.get("/campgrounds/:id/edit", async (req, res, next) => {
-    try {
+  app.get(
+    "/campgrounds/:id/edit",
+    catchAsync(async (req, res, next) => {
       const { id } = req.params;
       const campground = await Campground.findById(id);
       res.render("campgrounds/edit", { campground });
-    } catch (e) {
-      next(e);
-    }
-  });
+    })
+  );
 
-  app.put("/campgrounds/:id/edit", async (req, res, next) => {
-    try {
+  app.put(
+    "/campgrounds/:id/edit",
+    catchAsync(async (req, res, next) => {
       const { id } = req.params;
       // TIP: req.body brings 'title' and 'location' wrapped on an 'campground' object:
       // i.e. { campground: { title: 'Tumbling Creek', location: 'Jupiter, Florida' } }
@@ -95,30 +105,27 @@ async function main() {
       // Why copy the campground? Because I will probably add more attributes later when editing.
       console.log({ campground });
       res.redirect(`/campgrounds/${campground._id}/show`);
-    } catch (e) {
-      next(e);
-    }
-  });
+    })
+  );
 
   // * DELETE CAMPGROUND
-  app.delete("/campgrounds/:id/delete", async (req, res, next) => {
-    try {
+  app.delete(
+    "/campgrounds/:id/delete",
+    catchAsync(async (req, res, next) => {
       const { id } = req.params;
       const deletedCampground = await Campground.findByIdAndDelete(id);
       console.log({ deletedCampground });
       res.redirect("/campgrounds");
-    } catch (e) {
-      next(e);
-    }
-  });
+    })
+  );
 
   app.all("*", (req, res, next) => {
     next(new ExpressError("Page Not Found", 404));
   });
 
   app.use((err, req, res, next) => {
-    const { statusCode = 5000 } = err;
-    if (!err.message) err.message = "Something went wrong..."
+    const { statusCode = 500 } = err;
+    if (!err.message) err.message = "Something went wrong...";
     res.status(statusCode).render("error", { err });
   });
 
