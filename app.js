@@ -5,6 +5,7 @@ import Campground from "./models/campgrounds.js";
 import methodOverride from "method-override";
 import ExpressError from "./src/utils/ExpressError.js";
 import catchAsync from "./src/utils/catchAsync.js";
+import { validateCampground } from "./src/utils/joiValidations.js";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -14,10 +15,10 @@ main().catch((err) => console.log(err));
 
 /**
  * ExpressError
- * I can throw ExpressError inside try/catch blocks (on the try
- * section) to catch errors that won't be automatically detected
- * by node, like creating an empty campground. It will pass to
- * next() on the catch block, then to app.use at the bottom.
+ * I can throw ExpressError to catch errors that wont't be
+ * automatically detected by node, like creating an empty
+ * campground. It will pass to next and reach app.use at the
+ * bottom.
  */
 
 async function main() {
@@ -47,19 +48,10 @@ async function main() {
     })
   );
 
-  // app.get(
-    // "/campgrounds",
-    // catchAsync(async (req, res) => {
-      // const campgrounds = await Campground.find({});
-      // res.render("campgrounds/index", { campgrounds });
-    // })
-  // );
-
   // * CAMPGROUND DETAILS
   app.get(
     "/campgrounds/:id/show",
     catchAsync(async (req, res, next) => {
-      // throw new ExpressError("OOPS, ERROR MANUALLY THRONW", 404);
       const { id } = req.params;
       const campground = await Campground.findById(id);
       res.render("campgrounds/show", { campground });
@@ -73,6 +65,7 @@ async function main() {
 
   app.post(
     "/campgrounds/new",
+    validateCampground,
     catchAsync(async (req, res, next) => {
       const campground = new Campground(req.body.campground);
       await campground.save();
