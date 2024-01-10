@@ -51,7 +51,7 @@ async function main() {
   // * CAMPGROUND DETAILS
   app.get(
     "/campgrounds/:id/show",
-    catchAsync(async (req, res, next) => {
+    catchAsync(async (req, res) => {
       const { id } = req.params;
       const campground = await Campground.findById(id);
       res.render("campgrounds/show", { campground });
@@ -66,7 +66,7 @@ async function main() {
   app.post(
     "/campgrounds/new",
     validateCampground,
-    catchAsync(async (req, res, next) => {
+    catchAsync(async (req, res) => {
       const campground = new Campground(req.body.campground);
       await campground.save();
       res.redirect(`/campgrounds/${campground._id}/show`);
@@ -76,7 +76,7 @@ async function main() {
   // * EDIT CAMPGROUND
   app.get(
     "/campgrounds/:id/edit",
-    catchAsync(async (req, res, next) => {
+    catchAsync(async (req, res) => {
       const { id } = req.params;
       const campground = await Campground.findById(id);
       res.render("campgrounds/edit", { campground });
@@ -85,7 +85,7 @@ async function main() {
 
   app.put(
     "/campgrounds/:id/edit",
-    catchAsync(async (req, res, next) => {
+    catchAsync(async (req, res) => {
       const { id } = req.params;
       // TIP: req.body brings 'title' and 'location' wrapped on an 'campground' object:
       // i.e. { campground: { title: 'Tumbling Creek', location: 'Jupiter, Florida' } }
@@ -104,7 +104,7 @@ async function main() {
   // * DELETE CAMPGROUND
   app.delete(
     "/campgrounds/:id/delete",
-    catchAsync(async (req, res, next) => {
+    catchAsync(async (req, res) => {
       const { id } = req.params;
       const deletedCampground = await Campground.findByIdAndDelete(id);
       console.log({ deletedCampground });
