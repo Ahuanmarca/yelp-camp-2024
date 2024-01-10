@@ -1,6 +1,6 @@
 # YelpCamp
 
-Web App created with **Node.js** and **MongoDB**.
+Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Developer Bootcamp 2024".
 
 ## Routes
 
@@ -15,16 +15,43 @@ Web App created with **Node.js** and **MongoDB**.
 | /campgrounds/new        | GET    | Form to create new campground     |
 | /campgrounds/new        | POST   | (Endpoint) Creates new campground |
 
+Some routes don't need to be so specific, but I find it more readable this way. For instance, the show route doesn't need to end with '/show'.
+
 ## Error Handling / Form Validation
 
-- Routes have (req, res, next) signature.
-- try/catch blocks inside routes.
-  - Some errors will be thrown by node/express.
-  - Some errors must be manually thrown (i.e. trying to create an empty campground).
-- Using custom ExpressError for manually thronwn errors.
-- At the bottom of app.js we have an app.use that catches all errors passed to next() in the routes.
+Not using try/catch blocks, but instead...
+
+- catchAsync function is defined in separate file. It's a higher order function that expects the route's async function as it's argument.
+
+```js
+// catchAsync.js
+function catchAsync(asyncFunc) {
+  return (req, res, next) => {
+    asyncFunc(req, res, next).catch(next);
+  };
+}
+
+export default catchAsync;
+```
+
+- Routes don't have "(req, res, next)" signature. Instead, routes' functions are wrapped in the catchAsync funtion. Example:
+
+```js
+app.get(
+  "/campgrounds",
+  catchAsync(async (req, res) => {
+    const campgrounds = await Campground.find({});
+    res.render("campgrounds/index", { campgrounds });
+  })
+);
+```
+
+- Using **joi** package for form validations.
+
+- Some errors will be thrown by node, others are thrown by **Joi** form validations. We can also manually throw ExpressError.
+
+- At the bottom of app.js we have an app.use that catches all errors passed to next() in the routes // For now there is no next() in the routes, only in the catchAsync middleware.
+
 - We are using an error.ejs template to show errors in a more friendly way.
 
 - For the client side form validation we are using Bootstrap.
-- TODO: For server side, we must throw errors when needed.
-- TODO: Use JOI for server side form validation.
