@@ -1,8 +1,8 @@
-import setLocalEnvironment from "./config/environment.js";
-import dbConnect from "./config/database.js";
+import setLocalEnvironment from "./src/config/environment.js";
+import dbConnect from "./src/config/database.js";
 import express from "express";
-import Campground from "./models/campground.js";
-import Review from "./models/review.js";
+import Campground from "./src/models/campground.js"
+import Review from "./src/models/review.js";
 import methodOverride from "method-override";
 import ExpressError from "./src/utils/ExpressError.js";
 import catchAsync from "./src/utils/catchAsync.js";
@@ -23,7 +23,7 @@ async function main() {
   await dbConnect(MONGO_URL, MONGO_DB_NAME);
   const app = express();
 
-  app.set("views", path.join(__dirname, "views"));
+  app.set("views", path.join(__dirname, "src/views"));
   app.set("view engine", "ejs");
 
   // Allow express to read information comming from forms
