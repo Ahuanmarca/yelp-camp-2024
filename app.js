@@ -1,25 +1,21 @@
 import setLocalEnvironment from "./config/environment.js";
 import dbConnect from "./config/database.js";
 import express from "express";
-import Campground from "./models/campgrounds.js";
+import Campground from "./models/campground.js";
+import Review from "./models/review.js";
 import methodOverride from "method-override";
 import ExpressError from "./src/utils/ExpressError.js";
 import catchAsync from "./src/utils/catchAsync.js";
-import { validateCampground } from "./src/utils/joiValidations.js";
+import {
+  validateCampground,
+  validateReview,
+} from "./src/utils/joiValidations.js";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 main().catch((err) => console.log(err));
-
-/**
- * ExpressError
- * I can throw ExpressError to catch errors that wont't be
- * automatically detected by node, like creating an empty
- * campground. It will pass to next and reach app.use at the
- * bottom.
- */
 
 async function main() {
   setLocalEnvironment();
@@ -48,12 +44,12 @@ async function main() {
     })
   );
 
-  // * CAMPGROUND DETAILS
+  // * CAMPGROUND DETAILS (SHOW)
   app.get(
     "/campgrounds/:id/show",
     catchAsync(async (req, res) => {
       const { id } = req.params;
-      const campground = await Campground.findById(id);
+      const campground = await Campground.findById(id).populate("reviews");
       res.render("campgrounds/show", { campground });
     })
   );
@@ -112,6 +108,32 @@ async function main() {
     })
   );
 
+  // * REVIEW CAMPGROUND
+  app.post(
+    "/campgrounds/:id/reviews",
+    validateReview,
+    catchAsync(async (req, res) => {
+      const campground = await Campground.findById(req.params.id);
+      const review = new Review(req.body.review);
+      campground.reviews.push(review);
+      await review.save();
+      await campground.save();
+      res.redirect(`/campgrounds/${campground._id}/show`);
+    })
+  );
+
+  // DELETE REVIEW
+  app.delete(
+    "/campgrounds/:id/reviews/:reviewId",
+    catchAsync(async (req, res) => {
+      const { id, reviewId } = req.params;
+      await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+      await Review.findByIdAndDelete(reviewId);
+      res.redirect(`/campgrounds/${id}/show`);
+    })
+  );
+
+  // * BOTTOM SECTION - CATCH ALL FUNCTIONS
   app.all("*", (req, res, next) => {
     next(new ExpressError("Page Not Found", 404));
   });

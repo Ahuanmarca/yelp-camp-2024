@@ -1,7 +1,7 @@
 import Joi from "joi";
 import ExpressError from "./ExpressError.js";
 
-const CampgroundSchema = Joi.object({
+const campgroundSchema = Joi.object({
   campground: Joi.object({
     title: Joi.string().required(),
     price: Joi.number().required().min(0),
@@ -12,7 +12,7 @@ const CampgroundSchema = Joi.object({
 });
 
 function validateCampground(req, res, next) {
-  const { error } = CampgroundSchema.validate(req.body);
+  const { error } = campgroundSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
@@ -21,6 +21,21 @@ function validateCampground(req, res, next) {
   }
 }
 
-export {
-  validateCampground,
+const reviewSchema = Joi.object({
+  review: Joi.object({
+    rating: Joi.number().required().min(1).max(5),
+    body: Joi.string().required(),
+  }).required(),
+});
+
+function validateReview(req, res, next) {
+  const { error } = reviewSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
 }
+
+export { validateCampground, validateReview };
