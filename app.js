@@ -25,6 +25,7 @@ async function main() {
   // inside the req.body, when form action is "POST"
   app.use(express.urlencoded({ extended: true }));
   app.use(methodOverride("_method"));
+  app.use(express.static(path.join(__dirname, "public")));
 
   app.get("/", (req, res) => {
     res.render("home");
