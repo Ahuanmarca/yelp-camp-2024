@@ -13,12 +13,16 @@ router.get(
   })
 );
 
-// * CAMPGROUND DETAILS (SHOW)
+// * SHOW CAMPGROUND DETAILS (SHOW)
 router.get(
   "/:id/show",
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id).populate("reviews");
+    if (!campground) {
+      req.flash("error", "Cannot find that campground!");
+      return res.redirect("/campgrounds/all");
+    }
     res.render("campgrounds/show", { campground });
   })
 );
@@ -32,8 +36,10 @@ router.post(
   "/new",
   validateCampground,
   catchAsync(async (req, res) => {
+    console.log(req);
     const campground = new Campground(req.body.campground);
     await campground.save();
+    req.flash("success", "Successfully created a new campground!");
     res.redirect(`/campgrounds/${campground._id}/show`);
   })
 );
@@ -44,6 +50,10 @@ router.get(
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
+    if (!campground) {
+      req.flash("error", "Cannot find that campground!");
+      return res.redirect("/campgrounds/all");
+    }
     res.render("campgrounds/edit", { campground });
   })
 );
@@ -61,7 +71,8 @@ router.put(
       { new: true }
     );
     // Why copy the campground? Because I will probably add more attributes later when editing.
-    console.log({ campground });
+    console.log({ newCampground: campground });
+    req.flash('success', 'Successfully updated campground!');
     res.redirect(`/campgrounds/${campground._id}/show`);
   })
 );
@@ -72,7 +83,8 @@ router.delete(
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const deletedCampground = await Campground.findByIdAndDelete(id);
-    console.log({ deletedCampground });
+    console.log({ deleted: deletedCampground });
+    req.flash('success', 'Successfully deleted campground');
     res.redirect("/campgrounds/all");
   })
 );

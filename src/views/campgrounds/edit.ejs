@@ -1,9 +1,8 @@
-<%- include('../partials/head') %> <%- include('../partials/navbar') %>
+<%- include('../partials/head') %>
 <%# TIP:
 campground[title] and campground[location] CREATES OBJECT
 { campground: { title: 'Tumbling Creek', location: 'Jupiter, Florida' }}
 ON req.body %>
-<main class="container mt-5">
   <div class="row">
     <h1 class="text-center">Edit Campground</h1>
     <div class="col-6 offset-3">
@@ -51,5 +50,4 @@ ON req.body %>
       <a href="/campgrounds/<%= campground._id %>/show">Back to campground</a>
     </div>
   </div>
-</main>
 <%- include('../partials/footer') %>

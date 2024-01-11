@@ -2,6 +2,7 @@ import setLocalEnvironment from "./src/config/environment.js";
 import dbConnect from "./src/config/database.js";
 import express from "express";
 import session from "express-session";
+import flash from "connect-flash";
 import methodOverride from "method-override";
 import ExpressError from "./src/utils/ExpressError.js";
 import campgrounds from "./src/routes/campgroundsRouter.js";
@@ -39,6 +40,16 @@ async function main() {
     },
   };
   app.use(session(sessionConfig));
+  app.use(flash());
+
+  // Middleware that makes flash messages available in avery template so
+  // we don't have to pass the message to every template res.render arguments
+  // TODO: Put in README
+  app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+  });
 
   app.get("/", (req, res) => {
     res.render("home");
