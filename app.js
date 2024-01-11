@@ -1,6 +1,7 @@
 import setLocalEnvironment from "./src/config/environment.js";
 import dbConnect from "./src/config/database.js";
 import express from "express";
+import session from "express-session";
 import methodOverride from "method-override";
 import ExpressError from "./src/utils/ExpressError.js";
 import campgrounds from "./src/routes/campgroundsRouter.js";
@@ -14,7 +15,7 @@ main().catch((err) => console.log(err));
 
 async function main() {
   setLocalEnvironment();
-  const { MONGO_URL, MONGO_DB_NAME } = process.env;
+  const { MONGO_URL, MONGO_DB_NAME, SESSION_CONFIG_SECRET } = process.env;
   await dbConnect(MONGO_URL, MONGO_DB_NAME);
   const app = express();
 
@@ -26,6 +27,18 @@ async function main() {
   app.use(express.urlencoded({ extended: true }));
   app.use(methodOverride("_method"));
   app.use(express.static(path.join(__dirname, "public")));
+
+  const sessionConfig = {
+    secret: SESSION_CONFIG_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  };
+  app.use(session(sessionConfig));
 
   app.get("/", (req, res) => {
     res.render("home");
