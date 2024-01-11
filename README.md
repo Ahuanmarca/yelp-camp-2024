@@ -68,6 +68,65 @@ app.get(
 
 - For the client side form validation we are using Bootstrap.
 
+## Session and Flash Messages (Alerts)
+
+To make flash alerts, we need to install npm packages "express-session" and "connect-flash".
+
+Configure session and flash (before the routes):
+
+```js
+// app.js
+const sessionConfig = {
+  secret: SESSION_CONFIG_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
+app.use(session(sessionConfig));
+app.use(flash());
+```
+
+We use a middleware to make the flash message available in all templates, instead of passing the message to each template route. These also goes before the routes:
+
+```js
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
+```
+
+On the routes, now we can create flash messages when needed. Alert (flash message) displayed when creating a new campground:
+
+```js
+router.post(
+  "/new",
+  validateCampground,
+  catchAsync(async (req, res) => {
+    console.log(req);
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    req.flash("success", "Successfully created a new campground!");
+    res.redirect(`/campgrounds/${campground._id}/show`);
+  })
+);
+```
+
+We are making the messages available for the templates, but we must include them in the templates' code for the messages to be actually displayed. We include the flash partial inside the head partial because the head partial is included by every other view (the flash message should always be available).
+
+```html
+<!-- ... -->
+<body>
+  <%- include('./navbar') %>
+  <main class="container mt-5">
+    <%- include('./flash') %>
+    <!-- ... -->
+```
+
 # TODO
 
 - How do I make routes more maintainable? Maybe storing the route signatures in an object, then passing the object to the places where the rounte is needed. Then I would only need to change the routes in one place. The route would need to pass to the routes js files and the ejs files.
