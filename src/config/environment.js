@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 export default function () {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     dotenv.config();
   }
 }

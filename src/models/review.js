@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
@@ -6,4 +6,4 @@ const reviewSchema = new Schema({
   rating: Number,
 });
 
-export default mongoose.model("Review", reviewSchema);
+export default mongoose.model('Review', reviewSchema);

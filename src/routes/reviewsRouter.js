@@ -1,13 +1,13 @@
-import express from "express";
+import express from 'express';
 const router = express.Router({ mergeParams: true });
-import Review from "../models/review.js";
-import Campground from "../models/campground.js";
-import catchAsync from "../utils/catchAsync.js";
-import { validateReview } from "../utils/joiValidations.js";
+import Review from '../models/review.js';
+import Campground from '../models/campground.js';
+import catchAsync from '../utils/catchAsync.js';
+import { validateReview } from '../utils/joiValidations.js';
 
 // * REVIEW CAMPGROUND
 router.post(
-  "/new",
+  '/new',
   validateReview,
   catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
@@ -15,19 +15,19 @@ router.post(
     campground.reviews.push(review);
     await review.save();
     await campground.save();
-    req.flash("success", "Created new review!");
+    req.flash('success', 'Created new review!');
     res.redirect(`/campgrounds/${campground._id}/show`);
   })
 );
 
 // * DELETE REVIEW
 router.delete(
-  "/:reviewId",
+  '/:reviewId',
   catchAsync(async (req, res) => {
     const { id, reviewId } = req.params;
     await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
-    req.flash("success", "Successfully deleted review");
+    req.flash('success', 'Successfully deleted review');
     res.redirect(`/campgrounds/${id}/show`);
   })
 );

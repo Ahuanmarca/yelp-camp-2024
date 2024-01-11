@@ -1,5 +1,5 @@
-import Joi from "joi";
-import ExpressError from "./ExpressError.js";
+import Joi from 'joi';
+import ExpressError from './ExpressError.js';
 
 const campgroundSchema = Joi.object({
   campground: Joi.object({
@@ -14,7 +14,7 @@ const campgroundSchema = Joi.object({
 function validateCampground(req, res, next) {
   const { error } = campgroundSchema.validate(req.body);
   if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
+    const msg = error.details.map((el) => el.message).join(',');
     throw new ExpressError(msg, 400);
   } else {
     next();
@@ -31,7 +31,7 @@ const reviewSchema = Joi.object({
 function validateReview(req, res, next) {
   const { error } = reviewSchema.validate(req.body);
   if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
+    const msg = error.details.map((el) => el.message).join(',');
     throw new ExpressError(msg, 400);
   } else {
     next();

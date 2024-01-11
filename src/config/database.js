@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export default async function (MONGO_URL, MONGO_DB_NAME) {
   await mongoose.connect(MONGO_URL, {
