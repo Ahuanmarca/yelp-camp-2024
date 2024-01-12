@@ -1,1 +1,0 @@
-When moving (or renaming) any of these files, check all the "include" statements to avoid breaking links.
