@@ -5,6 +5,7 @@ import Campground from '../models/campground.js';
 import catchAsync from '../utils/catchAsync.js';
 import { validateReview } from '../utils/joiValidations.js';
 import isLoggedIn from '../utils/isLoggedIn.js';
+import isReviewAuthor from '../utils/isReviewAuthor.js';
 
 // * REVIEW CAMPGROUND
 router.post(
@@ -27,6 +28,7 @@ router.post(
 router.delete(
   '/:reviewId',
   isLoggedIn,
+  isReviewAuthor,
   catchAsync(async (req, res) => {
     const { id, reviewId } = req.params;
     await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });

@@ -21,9 +21,17 @@ router.get(
   catchAsync(async (req, res) => {
     const { id } = req.params;
     // * Nested populate so get review authors 😵‍💫
+    // Author is always displayed with the comment
+    // so it would be better practice to embed it
     const campground = await Campground.findById(id)
-      .populate('reviews')
+      .populate({
+        path: 'reviews',    // <- Nested populate
+        populate: {         // <- Nested populate
+          path: 'author',   // <- Nested populate
+        }
+      })
       .populate('author');
+    console.log(campground);
     if (!campground) {
       req.flash('error', 'Cannot find that campground!');
       return res.redirect('/campgrounds/all');
