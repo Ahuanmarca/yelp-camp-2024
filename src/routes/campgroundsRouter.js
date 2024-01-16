@@ -4,6 +4,7 @@ import catchAsync from '../utils/catchAsync.js';
 import Campground from '../models/campground.js';
 import { validateCampground } from '../utils/joiValidations.js';
 import isLoggedIn from '../utils/isLoggedIn.js';
+import isAuthor from '../utils/isAuthor.js';
 
 // * ALL CAMPGROUNDS
 router.get(
@@ -19,7 +20,10 @@ router.get(
   '/:id/show',
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findById(id).populate('reviews');
+    // * Nested populate so get review authors 😵‍💫
+    const campground = await Campground.findById(id)
+      .populate('reviews')
+      .populate('author');
     if (!campground) {
       req.flash('error', 'Cannot find that campground!');
       return res.redirect('/campgrounds/all');
@@ -38,8 +42,8 @@ router.post(
   isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
-    console.log(req);
     const campground = new Campground(req.body.campground);
+    campground.author = req.user._id; // ? passport feature ?
     await campground.save();
     req.flash('success', 'Successfully created a new campground!');
     res.redirect(`/campgrounds/${campground._id}/show`);
@@ -50,6 +54,7 @@ router.post(
 router.get(
   '/:id/edit',
   isLoggedIn,
+  isAuthor,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
@@ -64,11 +69,14 @@ router.get(
 router.put(
   '/:id/edit',
   isLoggedIn,
+  isAuthor,
+  validateCampground,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     // TIP: req.body brings 'title' and 'location' wrapped on an 'campground' object:
     // i.e. { campground: { title: 'Tumbling Creek', location: 'Jupiter, Florida' } }
     // This is because of the 'name' property on edit.ejs
+    // const campground = await Campground.findById(id);
     const campground = await Campground.findByIdAndUpdate(
       id,
       { ...req.body.campground },
@@ -85,6 +93,7 @@ router.put(
 router.delete(
   '/:id/delete',
   isLoggedIn,
+  isAuthor,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const deletedCampground = await Campground.findByIdAndDelete(id);

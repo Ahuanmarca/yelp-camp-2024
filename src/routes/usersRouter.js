@@ -39,7 +39,7 @@ router.post(
   storeReturnTo,
   passport.authenticate('local', {
     failureFlash: true,
-    failureRedirect: '/login',
+    failureRedirect: '/users/login',
   }),
   (req, res) => {
     req.flash('success', 'welcome back!');
