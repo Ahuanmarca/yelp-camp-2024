@@ -4,9 +4,15 @@ import express from 'express';
 import session from 'express-session';
 import flash from 'connect-flash';
 import methodOverride from 'method-override';
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
+import User from './src/models/user.js';
 import ExpressError from './src/utils/ExpressError.js';
 import campgrounds from './src/routes/campgroundsRouter.js';
 import review from './src/routes/reviewsRouter.js';
+import users from './src/routes/usersRouter.js';
+
+// Configure __dirname variable. Different method when using require/exports (common js)
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -27,6 +33,7 @@ async function main() {
   // inside the req.body, when form action is "POST"
   app.use(express.urlencoded({ extended: true }));
   app.use(methodOverride('_method'));
+  // Make the 'public' directory available on the ejs templates
   app.use(express.static(path.join(__dirname, 'public')));
 
   const sessionConfig = {
@@ -42,9 +49,20 @@ async function main() {
   app.use(session(sessionConfig));
   app.use(flash());
 
+  app.use(passport.initialize());
+  app.use(passport.session());
+  passport.use(new LocalStrategy(User.authenticate()));
+  passport.serializeUser(User.serializeUser());
+  passport.deserializeUser(User.deserializeUser());
+
   // Middleware that makes flash messages available in avery template so
   // we don't have to pass the message to every template res.render arguments
   app.use((req, res, next) => {
+    console.log(req.originalUrl);
+    if (!['/users/login', '/'].includes(req.originalUrl)) {
+      req.session.returnTo = req.originalUrl;
+    }
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
@@ -57,13 +75,18 @@ async function main() {
   // * ROUTER
   app.use('/campgrounds', campgrounds);
   app.use('/campgrounds/:id/reviews', review);
+  app.use('/users', users);
 
-  // * BOTTOM SECTION - CATCH ALL FUNCTIONS
+  // * ROUTE NOT FOUND (Catch All)
+  // This 'route' should be reached only if all other routes are not hit
   app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));
   });
 
-  app.use((err, req, res) => { // <- this function had next, but it wasn't in use
+  // ? 'next' is not used, but it generates an error message if I delete it
+  // TODO: Document (in README?)
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
     const { statusCode = 500 } = err;
     if (!err.message) err.message = 'Something went wrong...';
     res.status(statusCode).render('error', { err });

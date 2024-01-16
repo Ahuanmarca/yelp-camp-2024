@@ -3,6 +3,7 @@ const router = express.Router();
 import catchAsync from '../utils/catchAsync.js';
 import Campground from '../models/campground.js';
 import { validateCampground } from '../utils/joiValidations.js';
+import isLoggedIn from '../utils/isLoggedIn.js';
 
 // * ALL CAMPGROUNDS
 router.get(
@@ -28,12 +29,13 @@ router.get(
 );
 
 // * CREATE NEW CAMPGROUND
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
   res.render('campgrounds/new');
 });
 
 router.post(
   '/new',
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     console.log(req);
@@ -47,6 +49,7 @@ router.post(
 // * EDIT CAMPGROUND
 router.get(
   '/:id/edit',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
@@ -60,6 +63,7 @@ router.get(
 
 router.put(
   '/:id/edit',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     // TIP: req.body brings 'title' and 'location' wrapped on an 'campground' object:
@@ -80,6 +84,7 @@ router.put(
 // * DELETE CAMPGROUND
 router.delete(
   '/:id/delete',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const deletedCampground = await Campground.findByIdAndDelete(id);
