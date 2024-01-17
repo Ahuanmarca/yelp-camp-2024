@@ -5,25 +5,23 @@ import catchAsync from '../middlewares/catchAsync.js';
 import storeReturnTo from '../middlewares/storeReturnTo.js';
 import * as usersController from '../controllers/users.controller.js';
 
-// * REGISTER NEW USER
-router.get('/register', usersController.registerUserForm);
+router
+  .route('/register')
+  .get(usersController.registerUserForm)
+  .post(catchAsync(usersController.createUser));
 
-router.post('/register', catchAsync(usersController.createUser));
+router
+  .route('/login')
+  .get(usersController.loginUserForm)
+  .post(
+    storeReturnTo,
+    passport.authenticate('local', {
+      failureFlash: true,
+      failureRedirect: '/users/login',
+    }),
+    usersController.loginUserFlashRedirect
+  );
 
-// * LOGIN
-router.get('/login', usersController.loginUserForm);
-
-router.post(
-  '/login',
-  storeReturnTo,
-  passport.authenticate('local', {
-    failureFlash: true,
-    failureRedirect: '/users/login',
-  }),
-  usersController.loginUserFlashRedirect
-);
-
-// * LOGOUT
 router.get('/logout', usersController.logoutUser);
 
 export default router;

@@ -8,25 +8,16 @@ import * as campgroundsController from '../controllers/campgrounds.controller.js
 
 router.get('/all', catchAsync(campgroundsController.allCampgrounds));
 router.get('/:id/show', catchAsync(campgroundsController.showCampground));
-router.get('/new', isLoggedIn, campgroundsController.newCampgroundForm);
 
-router.post(
-  '/new',
-  isLoggedIn, validateCampground,
-  catchAsync(campgroundsController.createNewCampground)
-);
-router.get(
-  '/:id/edit',
-  isLoggedIn, isAuthor,
-  catchAsync(campgroundsController.editCampgroundForm)
-);
-router.put(
-  '/:id/edit',
-  isLoggedIn, isAuthor, validateCampground,
-  catchAsync(campgroundsController.updateCampground)
-);
-router.delete(
-  '/:id/delete',
+router.route('/new')
+  .get(isLoggedIn, campgroundsController.newCampgroundForm)
+  .post(isLoggedIn, validateCampground, catchAsync(campgroundsController.createNewCampground));
+
+router.route('/:id/edit')
+  .get(isLoggedIn, isAuthor, catchAsync(campgroundsController.editCampgroundForm))
+  .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgroundsController.updateCampground));
+
+router.delete('/:id/delete',
   isLoggedIn, isAuthor,
   catchAsync(campgroundsController.deleteCampground)
 );
