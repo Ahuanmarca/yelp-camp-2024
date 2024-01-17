@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router({ mergeParams: true });
-import Review from '../models/review.js';
-import Campground from '../models/campground.js';
+import Review from '../models/Review.js';
+import Campground from '../models/Campground.js';
 import catchAsync from '../utils/catchAsync.js';
 import { validateReview } from '../utils/joiValidations.js';
 import isLoggedIn from '../utils/isLoggedIn.js';

@@ -1,4 +1,4 @@
-import Campground from '../models/campground.js';
+import Campground from '../models/Campground.js';
 
 async function isAuthor(req, res, next) {
   const { id } = req.params;

@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import passport from 'passport';
-import User from '../models/user.js';
+import User from '../models/User.js'; // TODO: TEST COMMENTING THIS OUT!
 import catchAsync from '../utils/catchAsync.js';
 import storeReturnTo from '../utils/storeReturnTo.js';
 

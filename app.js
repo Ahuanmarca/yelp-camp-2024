@@ -6,11 +6,11 @@ import flash from 'connect-flash';
 import methodOverride from 'method-override';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import User from './src/models/user.js';
+import User from './src/models/User.js';
 import ExpressError from './src/utils/ExpressError.js';
-import campgrounds from './src/routes/campgroundsRouter.js';
-import review from './src/routes/reviewsRouter.js';
-import users from './src/routes/usersRouter.js';
+import campgrounds from './src/routes/campgrounds.router.js';
+import review from './src/routes/reviews.router.js';
+import users from './src/routes/users.router.js';
 
 // Configure __dirname variable. Different method when using require/exports (common js)
 import path from 'path';

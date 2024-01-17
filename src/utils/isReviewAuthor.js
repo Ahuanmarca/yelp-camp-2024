@@ -1,4 +1,4 @@
-import Review from '../models/review.js';
+import Review from '../models/Review.js';
 
 async function isReviewAuthor(req, res, next) {
   const { id, reviewId } = req.params;
