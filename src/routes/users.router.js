@@ -1,9 +1,9 @@
 import express from 'express';
 const router = express.Router();
 import passport from 'passport';
-import User from '../models/User.js'; // TODO: TEST COMMENTING THIS OUT!
-import catchAsync from '../utils/catchAsync.js';
-import storeReturnTo from '../utils/storeReturnTo.js';
+import User from '../models/User.js';
+import catchAsync from '../middlewares/catchAsync.js';
+import storeReturnTo from '../middlewares/storeReturnTo.js';
 
 // * REGISTER NEW USER
 router.get('/register', (req, res) => {

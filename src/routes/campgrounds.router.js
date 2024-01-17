@@ -1,10 +1,10 @@
 import express from 'express';
 const router = express.Router();
-import catchAsync from '../utils/catchAsync.js';
+import catchAsync from '../middlewares/catchAsync.js';
 import Campground from '../models/Campground.js';
-import { validateCampground } from '../utils/joiValidations.js';
-import isLoggedIn from '../utils/isLoggedIn.js';
-import isAuthor from '../utils/isAuthor.js';
+import { validateCampground } from '../middlewares/joiValidations.js';
+import isLoggedIn from '../middlewares/isLoggedIn.js';
+import isAuthor from '../middlewares/isAuthor.js';
 
 // * ALL CAMPGROUNDS
 router.get(

@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import ExpressError from './ExpressError.js';
+import ExpressError from '../utils/ExpressError.js';
 
 const campgroundSchema = Joi.object({
   campground: Joi.object({

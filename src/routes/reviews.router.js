@@ -2,10 +2,10 @@ import express from 'express';
 const router = express.Router({ mergeParams: true });
 import Review from '../models/Review.js';
 import Campground from '../models/Campground.js';
-import catchAsync from '../utils/catchAsync.js';
-import { validateReview } from '../utils/joiValidations.js';
-import isLoggedIn from '../utils/isLoggedIn.js';
-import isReviewAuthor from '../utils/isReviewAuthor.js';
+import catchAsync from '../middlewares/catchAsync.js';
+import { validateReview } from '../middlewares/joiValidations.js';
+import isLoggedIn from '../middlewares/isLoggedIn.js';
+import isReviewAuthor from '../middlewares/isReviewAuthor.js';
 
 // * REVIEW CAMPGROUND
 router.post(
