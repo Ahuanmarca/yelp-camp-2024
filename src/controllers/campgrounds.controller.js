@@ -31,7 +31,8 @@ const newCampgroundForm = (req, res) => {
 
 const createNewCampground = async (req, res) => {
   const campground = new Campground(req.body.campground);
-  campground.author = req.user._id; // ? passport feature ?
+  campground.images = req.files.map(f => ({ url: f.path, filename: f.filename })); // 'multer' feature
+  campground.author = req.user._id; // 'passport' feature
   await campground.save();
   req.flash('success', 'Successfully created a new campground!');
   res.redirect(`/campgrounds/${campground._id}/show`);

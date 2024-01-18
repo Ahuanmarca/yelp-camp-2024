@@ -1,10 +1,14 @@
+
 <%- include('../layout/top') %>
+
 <link rel="stylesheet" href="/styles/starability-grow.css">
   <div class="row">
     <!-- CAMPGROUND CARD -->
     <div class="col-6">
       <div class="card mb-3">
-        <img src="<%= campground.image %>" alt="..." class="card-img-top">
+
+        <%- include('../partials/carousel') %>
+
         <div class="card-body">
           <h5 class="card-title"><%= campground.title %></h5>
           <p class="card-text"><%= campground.description %></p>
