@@ -58,7 +58,6 @@ async function main() {
   // Middleware that makes flash messages available in avery template so
   // we don't have to pass the message to every template res.render arguments
   app.use((req, res, next) => {
-    console.log(req.originalUrl);
     if (!['/users/login', '/'].includes(req.originalUrl)) {
       req.session.returnTo = req.originalUrl;
     }

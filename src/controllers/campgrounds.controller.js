@@ -18,7 +18,6 @@ const showCampground = async (req, res) => {
       },
     })
     .populate('author');
-  console.log(campground);
   if (!campground) {
     req.flash('error', 'Cannot find that campground!');
     return res.redirect('/campgrounds/all');
@@ -60,7 +59,6 @@ const updateCampground = async (req, res) => {
     { new: true }
   );
   // Why copy the campground? Because I will probably add more attributes later when editing.
-  console.log({ newCampground: campground });
   req.flash('success', 'Successfully updated campground!');
   res.redirect(`/campgrounds/${campground._id}/show`);
 };
