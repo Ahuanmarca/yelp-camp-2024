@@ -70,7 +70,7 @@ async function main() {
   app.get('/', (req, res) => {
     res.render('home');
   });
-
+  
   // * ROUTER
   app.use('/campgrounds', campgrounds);
   app.use('/campgrounds/:id/reviews', review);
