@@ -22,15 +22,6 @@ ON req.body %>
           <div class="invalid-feedback">Please provide a location.</div>
         </div>
         <div class="mb-3">
-          <!-- OLD INPUT USED FOR IMAGE URL, TODO: Re-implement later -->
-          <!-- <label class="form-label" for="image">Image Url</label> -->
-          <!-- <input class="form-control" type="text" id="image" name="campground[image]" -->
-              <!-- value="<%=//campground.image %>"> -->
-          <!-- NEW INPUT TO UPLOAD FILES -->
-          <label class="form-label" for="image">Add Images</label>
-          <input type="file" name="image" id="image" multiple>
-        </div>
-        <div class="mb-3">
           <label class="form-label" for="price">Campground Price</label>
           <div class="input-group">
               <span class="input-group-text" id="price-label">$</span>
@@ -47,6 +38,30 @@ ON req.body %>
           <div class="valid-feedback">Looks good!</div>
           <div class="invalid-feedback">Please provide a description.</div>
         </div>
+
+        <!-- ADD MORE IMAGES FIELD -->
+        <div class="mb-3">
+          <label for="formFileMultiple" class="form-label">Add more images...</label>
+          <input class="form-control form-control-lg" type="file" id="formFileMultiple" multiple name="image">
+        </div>
+
+        <!-- DELETE IMAGES FIELD -->
+        <div class="mb-3">
+          <% campground.images.forEach((image, index) => { %>
+            <img src="<%= image.url %>" alt="" class="img-thumbnail">
+            <div class="form-check form-check-inline">
+              <input 
+                class="form-check-input"
+                type="checkbox"
+                id="image-<%=index%>"
+                name="deleteImages[]"
+                value="<%=image.filename%>"
+              />
+              <label class="form-check-label" for="image-<%=index%>">Delete Image</label>
+            </div>            
+          <% }) %>
+        </div>
+
         <div class="mb-3">
           <button class="btn btn-info">Update Campground</button>
         </div>

@@ -28,9 +28,9 @@ Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Deve
 
 # TODO
 
-- How do I make routes more maintainable? Maybe storing the route signatures in an object, then passing the object to the places where the rounte is needed. Then I would only need to change the routes in one place. The route would need to pass to the routes js files and the ejs files.
-- Screen captures
-- Explain how to use the app
-- BugFix Caroussel on show page (Bootstrap)
-- BugFix collapsible nav bar, nav partial (Bootstrap)
-- Should I add the reviews to the model on the seeds?
+- Create /repository directory inside /src. Database queries can be centralized here!
+- BugFix: Caroussel on show page (Bootstrap) incorreclty displaying images
+- BugFix collapsible nav bar, nav partial (Bootstrap), not showing links vertically!
+- Add the reviews to the model on the seeds, add some reviews
+- Limit how many images can be uploaded, size of the images, etc
+- Show selected files to upload (research other ways, I don't like the one from the course)

@@ -1,4 +1,5 @@
 import Campground from '../models/Campground.js';
+import { cloudinary } from '../config/cloudinary.js';
 
 const allCampgrounds = async (req, res) => {
   const campgrounds = await Campground.find({});
@@ -31,7 +32,10 @@ const newCampgroundForm = (req, res) => {
 
 const createNewCampground = async (req, res) => {
   const campground = new Campground(req.body.campground);
-  campground.images = req.files.map(f => ({ url: f.path, filename: f.filename })); // 'multer' feature
+  campground.images = req.files.map((f) => ({
+    url: f.path,
+    filename: f.filename,
+  })); // 'multer' feature
   campground.author = req.user._id; // 'passport' feature
   await campground.save();
   req.flash('success', 'Successfully created a new campground!');
@@ -63,6 +67,15 @@ const updateCampground = async (req, res) => {
   const imgs = req.files.map((f) => ({ url: f.path, filename: f.filename }));
   campground.images.push(...imgs);
   await campground.save();
+  if (req.body.deleteImages) {
+    for (const filename of req.body.deleteImages) {
+      await cloudinary.uploader.destroy(filename);
+    }
+    // MongoDB Query to delete elements of a nested array
+    await campground.updateOne({
+      $pull: { images: { filename: { $in: req.body.deleteImages } } },
+    });
+  }
   req.flash('success', 'Successfully updated campground!');
   res.redirect(`/campgrounds/${campground._id}/show`);
 };

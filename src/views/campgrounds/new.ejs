@@ -15,7 +15,13 @@
           <div class="valid-feedback">Looks good!</div>
           <div class="invalid-feedback">Please provide a location.</div>
         </div>
-        <input type="file" name="image" id="" multiple>
+
+        <div class="mb-3">
+          <label for="formFileMultiple" class="form-label">Select images to upload</label>
+          <input class="form-control form-control-lg" type="file" id="formFileMultiple" multiple name="image">
+        </div>
+        
+        <!-- <input type="file" name="image" id="" multiple> -->
         <!-- <div class="mb-3">
           <label class="form-label" for="image">Image Url</label>
           <input class="form-control" type="text" id="image" name="campground[image]">
