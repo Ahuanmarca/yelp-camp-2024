@@ -29,8 +29,11 @@ Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Deve
 # TODO
 
 - Create /repository directory inside /src. Database queries can be centralized here!
-- BugFix: Caroussel on show page (Bootstrap) incorreclty displaying images
-- BugFix collapsible nav bar, nav partial (Bootstrap), not showing links vertically!
-- Add the reviews to the model on the seeds, add some reviews
-- Limit how many images can be uploaded, size of the images, etc
 - Show selected files to upload (research other ways, I don't like the one from the course)
+- Limit how many images can be uploaded, size of the images, etc
+
+# Bugs
+
+- Thumbnails on edit page only work for Cloudinary hosted images. I have a lot of Unsplash images that I don't want to get rid of.
+- Caroussel on show page (Bootstrap) incorreclty displaying images
+- Collapsible nav bar, nav partial (Bootstrap), not showing links vertically!

@@ -48,7 +48,7 @@ ON req.body %>
         <!-- DELETE IMAGES FIELD -->
         <div class="mb-3">
           <% campground.images.forEach((image, index) => { %>
-            <img src="<%= image.url %>" alt="" class="img-thumbnail">
+            <img src="<%= image.thumbnail %>" alt="" class="img-thumbnail">
             <div class="form-check form-check-inline">
               <input 
                 class="form-check-input"
