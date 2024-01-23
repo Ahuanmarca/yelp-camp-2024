@@ -34,6 +34,10 @@
       </div>
     </div>
     <div class="col-6">
+      <!-- <div id='map' style='width: 100%; height: 300px;'></div> -->
+
+      <div id='map' style='width: 400px; height: 300px;'></div>
+
       <% if (currentUser) { %>
         <!-- CAMPGROUND REVIEW FORM -->
         <h2>Leave a Review</h2>
@@ -92,4 +96,24 @@
     <% }) %>
     </div>
   </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicmVuem9iZWxvbiIsImEiOiJjbHJveXA1czgwMDhpMmlwY2VlbGQ3cjY4In0.t-5PWpOUwbOj_zb4cDXv2A';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [<%=campground.geometry.coordinates%>],
+      zoom: 9,
+    });
+    new mapboxgl.Marker()
+    .setLngLat([<%=campground.geometry.coordinates%>])
+    .setPopup(
+        new mapboxgl.Popup({ offset: 25 })
+            .setHTML(
+                `<h3><%=campground.title%></h3><p><%=campground.location%></p>`
+            )
+    )
+    .addTo(map)
+  </script>
+
   <%- include('../layout/bottom') %>
