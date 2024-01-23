@@ -28,6 +28,7 @@ Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Deve
 
 # TODO
 
+- Update seed with geocoding
 - Create /repository directory inside /src. Database queries can be centralized here!
 - Show selected files to upload (research other ways, I don't like the one from the course)
 - Limit how many images can be uploaded, size of the images, etc

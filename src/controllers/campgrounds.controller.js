@@ -1,5 +1,13 @@
+// Make 'require' available in es6 modules
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 import Campground from '../models/Campground.js';
 import { cloudinary } from '../config/cloudinary.js';
+
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 const allCampgrounds = async (req, res) => {
   const campgrounds = await Campground.find({});
@@ -8,7 +16,7 @@ const allCampgrounds = async (req, res) => {
 
 const showCampground = async (req, res) => {
   const { id } = req.params;
-  // * Nested populate so get review authors 😵‍💫
+  // * Nested populate to get review authors 😵‍💫
   // Author is always displayed with the comment
   // so it would be better practice to embed it
   const campground = await Campground.findById(id)
@@ -31,13 +39,21 @@ const newCampgroundForm = (req, res) => {
 };
 
 const createNewCampground = async (req, res) => {
+  // TODO: Refactor geoData configuration to /config directory?
+  const geoData = await geocoder.forwardGeocode({
+    query: req.body.campground.location,
+    limit: 1,
+  }).send();
+
   const campground = new Campground(req.body.campground);
+  campground.geometry = geoData.body.features[0].geometry;
   campground.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
   })); // 'multer' feature
   campground.author = req.user._id; // 'passport' feature
   await campground.save();
+  console.log({ message: "Successfully created campground!", campground });
   req.flash('success', 'Successfully created a new campground!');
   res.redirect(`/campgrounds/${campground._id}/show`);
 };
