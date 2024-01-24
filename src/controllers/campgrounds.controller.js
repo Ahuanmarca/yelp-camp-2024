@@ -4,6 +4,7 @@ const require = createRequire(import.meta.url);
 
 import Campground from '../models/Campground.js';
 import { cloudinary } from '../config/cloudinary.js';
+import clusterCampgrounds from '../utils/clusterCampgrounds.js';
 
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapBoxToken = process.env.MAPBOX_TOKEN;
@@ -11,7 +12,8 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 const allCampgrounds = async (req, res) => {
   const campgrounds = await Campground.find({});
-  res.render('campgrounds/index', { campgrounds });
+  const clusterData = clusterCampgrounds(campgrounds);
+  res.render('campgrounds/index', { campgrounds, clusterData });
 };
 
 const showCampground = async (req, res) => {
