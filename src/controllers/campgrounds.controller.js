@@ -11,6 +11,7 @@ const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 const allCampgrounds = async (req, res) => {
+  // const campgrounds = await Campground.find({}).populate('popupText'); // TODO: What's this for?
   const campgrounds = await Campground.find({});
   const clusterData = clusterCampgrounds(campgrounds);
   res.render('campgrounds/index', { campgrounds, clusterData });
