@@ -11,6 +11,7 @@ import ExpressError from './src/utils/ExpressError.js';
 import campgrounds from './src/routes/campgrounds.router.js';
 import review from './src/routes/reviews.router.js';
 import users from './src/routes/users.router.js';
+import mongoSanitize from 'express-mongo-sanitize';
 
 // Configure __dirname variable. Different method when using require/exports (common js)
 import path from 'path';
@@ -35,6 +36,7 @@ async function main() {
   app.use(methodOverride('_method'));
   // Make the 'public' directory available on the ejs templates
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(mongoSanitize());
 
   const sessionConfig = {
     secret: SESSION_CONFIG_SECRET,
@@ -68,6 +70,7 @@ async function main() {
   });
 
   app.get('/', (req, res) => {
+    console.log(req.query);
     res.render('home');
   });
   
