@@ -1,20 +1,19 @@
 function clusterCampgrounds(campgrounds) {
   const clusterData = {
-    type: "FeatureCollection",
+    type: 'FeatureCollection',
     crs: {
-      type: "name",
+      type: 'name',
       properties: {
-        name: "urn:ogc:def:crs:OGC:1.3:CRS84"
-      }
+        name: 'urn:ogc:def:crs:OGC:1.3:CRS84',
+      },
     },
-    features: []
-  }
+    features: [],
+  };
   campgrounds.forEach((campground) => clusterData.features.push(campground));
   return clusterData;
 }
 
 export default clusterCampgrounds;
-
 
 /* 
 RECEIVES THE DATA IN THE FOLLOWING FORMAT:

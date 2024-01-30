@@ -8,13 +8,15 @@ import * as reviewsController from '../controllers/reviews.controller.js';
 
 router.post(
   '/new',
-  isLoggedIn, validateReview,
+  isLoggedIn,
+  validateReview,
   catchAsync(reviewsController.createReview)
 );
 
 router.delete(
   '/:reviewId',
-  isLoggedIn, isReviewAuthor,
+  isLoggedIn,
+  isReviewAuthor,
   catchAsync(reviewsController.deleteReview)
 );
 

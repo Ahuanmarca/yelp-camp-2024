@@ -33,6 +33,9 @@ Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Deve
 - Add option to use image URLs instead of uploading
 - Limit how many images can be uploaded, size of the images, etc
 - Refactor MapBox scripts that are inside index.ejs and show.ejs views. Put them on /public/scripts directory (problem: making the variables available on the script).
+- Handle errors more gracefully
+  - Some errors can have an error screen / template
+  - Some errors should only show a flash message
 - Fix bugs!
 
 # Bugs
@@ -41,3 +44,4 @@ Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Deve
 - Caroussel on show page (Bootstrap) incorreclty displaying images
 - Collapsible nav bar, nav partial (Bootstrap), not showing links vertically!
 - (Not technically a bug) VSCode shows errors on ejs templates where any ejs tags "<% ... %>" are used inside a "<script></script>" tag. I think the reason is because ejs is not valid JavaScript, and VSCode sees it as "incorrect" syntax inside of the "<script></script>" tags. How can I make those warnings go away?
+- When logging in, sometimes will redirect to 'http://localhost:3000/favicon.ico', which causes an error.

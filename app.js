@@ -73,7 +73,7 @@ async function main() {
     console.log(req.query);
     res.render('home');
   });
-  
+
   // * ROUTER
   app.use('/campgrounds', campgrounds);
   app.use('/campgrounds/:id/reviews', review);

@@ -44,10 +44,12 @@ const newCampgroundForm = (req, res) => {
 
 const createNewCampground = async (req, res) => {
   // TODO: Refactor geoData configuration to /config directory?
-  const geoData = await geocoder.forwardGeocode({
-    query: req.body.campground.location,
-    limit: 1,
-  }).send();
+  const geoData = await geocoder
+    .forwardGeocode({
+      query: req.body.campground.location,
+      limit: 1,
+    })
+    .send();
 
   const campground = new Campground(req.body.campground);
   campground.geometry = geoData.body.features[0].geometry;
@@ -57,7 +59,7 @@ const createNewCampground = async (req, res) => {
   })); // 'multer' feature
   campground.author = req.user._id; // 'passport' feature
   await campground.save();
-  console.log({ message: "Successfully created campground!", campground });
+  console.log({ message: 'Successfully created campground!', campground });
   req.flash('success', 'Successfully created a new campground!');
   res.redirect(`/campgrounds/${campground._id}/show`);
 };
