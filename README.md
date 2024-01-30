@@ -38,6 +38,12 @@ Web App created with **Node.js** and **MongoDB** for Colt Steele's "The Web Deve
   - Some errors should only show a flash message
 - Fix bugs!
 
+# Resilience
+
+Wrong, incorrectly formatted and/or incomplete data on the database whould not cause the app to crash, nor the features to work incorrectly. For instance, if the location is missing (or incorrectly formatted?), the cluster map won't show at all! Goal: Cluster map shows even if there's incorrect/missing location data.
+
+If I want to change the way URLs (routes) are coded, the program should't break. How can I create a single source of truth for all the routes?
+
 # Bugs
 
 - Thumbnails on edit page only work for Cloudinary hosted images. I have a lot of Unsplash images that I don't want to get rid of.
