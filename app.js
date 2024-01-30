@@ -39,11 +39,13 @@ async function main() {
   app.use(mongoSanitize());
 
   const sessionConfig = {
+    name: 'session', // it's a security recommendation to change the default name
     secret: SESSION_CONFIG_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
       httpOnly: true,
+      // secure: true, // cookies only work over https
       expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
