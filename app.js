@@ -12,6 +12,7 @@ import campgrounds from './src/routes/campgrounds.router.js';
 import review from './src/routes/reviews.router.js';
 import users from './src/routes/users.router.js';
 import mongoSanitize from 'express-mongo-sanitize';
+import helmet from 'helmet';
 
 // Configure __dirname variable. Different method when using require/exports (common js)
 import path from 'path';
@@ -52,6 +53,7 @@ async function main() {
   };
   app.use(session(sessionConfig));
   app.use(flash());
+  app.use(helmet({ contentSecurityPolicy: false }));
 
   app.use(passport.initialize());
   app.use(passport.session());
