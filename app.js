@@ -13,6 +13,7 @@ import review from './src/routes/reviews.router.js';
 import users from './src/routes/users.router.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
+import MongoStore from 'connect-mongo';
 
 // Configure __dirname variable. Different method when using require/exports (common js)
 import path from 'path';
@@ -24,8 +25,13 @@ main().catch((err) => console.log(err));
 
 async function main() {
   setLocalEnvironment();
-  const { MONGO_URL, MONGO_DB_NAME, SESSION_CONFIG_SECRET } = process.env;
-  await dbConnect(MONGO_URL, MONGO_DB_NAME);
+  const {
+    MONGO_URL,
+    MONGO_DB_NAME,
+    LOCAL_MONGO_DB_URL,
+    SESSION_CONFIG_SECRET,
+  } = process.env;
+  await dbConnect(MONGO_URL, MONGO_DB_NAME, LOCAL_MONGO_DB_URL);
   const app = express();
 
   app.set('views', path.join(__dirname, 'src/views'));
@@ -43,7 +49,17 @@ async function main() {
     })
   );
 
+  const dbUrl = LOCAL_MONGO_DB_URL;
+  const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+      secret: SESSION_CONFIG_SECRET || 'thisshouldbeabettersecret!',
+    },
+  });
+
   const sessionConfig = {
+    store,
     name: 'session', // it's a security recommendation to change the default name
     secret: SESSION_CONFIG_SECRET,
     resave: false,
@@ -74,7 +90,7 @@ async function main() {
     'https://api.tiles.mapbox.com/',
     'https://fonts.googleapis.com/',
     'https://use.fontawesome.com/',
-    "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css",
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   ];
   const connectSrcUrls = [
     'https://api.mapbox.com/',
